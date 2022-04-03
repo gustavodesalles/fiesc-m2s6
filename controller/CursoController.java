@@ -19,14 +19,19 @@ public class CursoController {
 
     @GET
     @Produces("application/json")
-    public Response obterCursos() {
-        return Response.ok(cursoService.obterCursos()).build();
+    public Response obterCursos(@QueryParam("nome") String nome) {
+        return Response.ok(cursoService.obterCursos(nome)).build();
     }
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response criarCurso(@Valid Curso curso) {
+    public Response criarCurso(@Valid Curso curso, @HeaderParam("Authorization") String authorization) {
+
+        if (!"Bearer senha123".equals(authorization)) {
+            return Response.status(403).build();
+        }
+
         try {
             return Response.ok(cursoService.criarCurso(curso)).status(201).build();
         } catch (Exception e) {
